@@ -9,14 +9,14 @@ except the hg38 reference FASTA:
 | tools | Python 3.12, R 4.4.3, numbat 1.5.2, hahmmr 1.0.0, GenomicAlignments 1.42, Rsamtools 2.22, rtracklayer 1.66, cellsnp-lite 1.2.3, samtools / bcftools / htslib 1.21 |
 | `resources/` | B-ALL diploid expression reference (RNAseqCNV's 44 samples), Ensembl 102 exon cache and gene symbols, 5.4 M 1kGP hg38 SNP sites inside genes (site lists only; the 5 GB panel is not needed at run time) |
 
-Image: `ballad:0.1.0`, linux/amd64, 1.2 GB. `docker run ... ballad:0.1.0 check` prints the versions.
+Image: `ballad:0.1.1`, linux/amd64, 1.2 GB. `docker run ... ballad:0.1.1 check` prints the versions.
 
 ## Build
 
 From the repository root (the build context must contain `ballad.py`, `R/` and `resources/`):
 
 ```bash
-docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.0 .
+docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.1 .
 ```
 
 The conda packages come from conda-forge and bioconda only (`container/environment.yml`, no defaults channel).
@@ -29,7 +29,7 @@ docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" \
   -v /path/to/bams:/data:ro \
   -v /path/to/hg38_dir:/ref:ro \
   -v "$PWD/out":/out \
-  ballad:0.1.0 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
+  ballad:0.1.1 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
 ```
 
 - The BAM must be hg38 / GRCh38 and indexed (`.bai` next to it); other builds are refused.
@@ -50,10 +50,10 @@ See the main README for every column.
 Without a registry, move the image as a file:
 
 ```bash
-docker save ballad:0.1.0 | gzip > ballad_0.1.0.tar.gz      # on the build machine
-singularity build ballad_0.1.0.sif docker-archive://ballad_0.1.0.tar.gz   # on the cluster
+docker save ballad:0.1.1 | gzip > ballad_0.1.1.tar.gz      # on the build machine
+singularity build ballad_0.1.1.sif docker-archive://ballad_0.1.1.tar.gz   # on the cluster
 singularity run --cleanenv --bind /path/to/bams:/data,/path/to/hg38_dir:/ref,$PWD/out:/out \
-  ballad_0.1.0.sif run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
+  ballad_0.1.1.sif run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
 ```
 
 ## Tested (Nov 2026, Docker 29 on Apple silicon, amd64 emulation)

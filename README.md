@@ -22,10 +22,10 @@ everything except the hg38 FASTA.
 Everything except the hg38 FASTA is in the image (`container/`, details in `container/README.md`):
 
 ```bash
-docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.0 .
+docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.1 .
 docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" \
   -v /path/to/bams:/data:ro -v /path/to/hg38_dir:/ref:ro -v "$PWD/out":/out \
-  ballad:0.1.0 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
+  ballad:0.1.1 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
 ```
 
 ## Use
