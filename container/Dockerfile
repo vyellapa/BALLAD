@@ -3,17 +3,17 @@
 # panel site lists and the exon cache (resources/, ~290 MB).
 #
 # Build (from the repository root, so resources/ and R/ are in the context):
-#   docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.2 .
+#   docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.3 .
 # Run:
 #   docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" \
 #     -v /path/to/bams:/data:ro -v /path/to/hg38_dir:/ref:ro -v "$PWD/out":/out \
-#     ballad:0.1.2 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
+#     ballad:0.1.3 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
 
 FROM mambaorg/micromamba:1.5.10
 
 LABEL org.opencontainers.image.title="BALLAD" \
       org.opencontainers.image.description="B-ALL karyotype, LOH and tumor fraction from hg38 bulk RNA-seq (allele counts at 1kGP SNPs + expression)" \
-      org.opencontainers.image.version="0.1.2"
+      org.opencontainers.image.version="0.1.3"
 
 COPY --chown=$MAMBA_USER:$MAMBA_USER container/environment.yml /tmp/environment.yml
 RUN micromamba install -y -n base -f /tmp/environment.yml && \

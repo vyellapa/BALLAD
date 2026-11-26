@@ -210,31 +210,42 @@ def cellsnp_prefix(cfg, mounts):
 def pileup_cellsnp(cfg, args, sd):
     # cellsnp-lite bulk mode (one BAM, no cell barcodes) at the panel sites given with -R, as numbat's
     # pileup_and_phase.R --bulk does. cellSNP.base.vcf.gz INFO: AD = alt reads, DP = ref + alt reads, OTH = other alleles.
+    # cellsnp-lite's own -p does not speed this mode up (one bulk BAM with -R: its threads share about one core), so
+    # each chromosome runs as its own cellsnp-lite process, --threads at a time, largest chromosomes first.
     pc = cfg["pileup"]
     out = sd / "cellsnp"; out.mkdir(exist_ok=True)
     bam = args.bam.resolve()
     prefix, m = cellsnp_prefix(cfg, {str(bam.parent): "/bam", str(cfg["sites_dir"]): "/sites", str(out): "/out"})
     flags = "UNMAP,SECONDARY,QCFAIL" if pc["keep_duplicates"] else "UNMAP,SECONDARY,QCFAIL,DUP"
-    sh(f"{prefix} -s {m[str(bam.parent)]}/{bam.name} -I {args.sample} -O {m[str(out)]} "
-       f"-R {m[str(cfg['sites_dir'])]}/all.sites.vcf.gz -p {args.threads} --minMAF 0 --minCOUNT 1 "
-       f"--minMAPQ {pc['min_mapq']} --exclFLAG {flags} --UMItag None --cellTAG None --gzip",
-       sd / "logs" / "cellsnp.log")
+
+    def one(chrom):
+        (out / f"chr{chrom}").mkdir(exist_ok=True)
+        sh(f"{prefix} -s {m[str(bam.parent)]}/{bam.name} -I {args.sample} -O {m[str(out)]}/chr{chrom} "
+           f"-R {m[str(cfg['sites_dir'])]}/chr{chrom}.sites.vcf.gz -p 1 --minMAF 0 --minCOUNT 1 "
+           f"--minMAPQ {pc['min_mapq']} --exclFLAG {flags} --UMItag None --cellTAG None --gzip",
+           sd / "logs" / f"cellsnp.chr{chrom}.log")
+
+    pmap(one, CHROMS, args.threads)
     afs = {c: load_sites(cfg, c) for c in CHROMS}
     rows = []
-    with gzip.open(out / "cellSNP.base.vcf.gz", "rt") as f:
-        for line in f:
-            if line.startswith("#"):
-                continue
-            c, pos, _, ref, alt, _, _, info = line.split("\t")[:8]
-            chrom = c.removeprefix("chr")
-            site = afs.get(chrom, {}).get(int(pos))
-            if site is None or (ref, alt) != site[:2]:
-                continue
-            kv = dict(x.split("=") for x in info.strip().split(";") if "=" in x)
-            alt_n, dp, oth = int(kv["AD"]), int(kv["DP"]), int(kv["OTH"])
-            if dp == 0:  # only non-panel alleles seen
-                continue
-            rows.append((f"chr{chrom}", int(pos), ref, alt, site[2], dp - alt_n, alt_n, dp, oth))
+    for part in CHROMS:
+        vcf = out / f"chr{part}" / "cellSNP.base.vcf.gz"
+        if not vcf.exists():
+            sys.exit(f"cellsnp-lite wrote no {vcf}; see {sd / 'logs' / f'cellsnp.chr{part}.log'}")
+        with gzip.open(vcf, "rt") as f:
+            for line in f:
+                if line.startswith("#"):
+                    continue
+                c, pos, _, ref, alt, _, _, info = line.split("\t")[:8]
+                chrom = c.removeprefix("chr")
+                site = afs.get(chrom, {}).get(int(pos))
+                if site is None or (ref, alt) != site[:2]:
+                    continue
+                kv = dict(x.split("=") for x in info.strip().split(";") if "=" in x)
+                alt_n, dp, oth = int(kv["AD"]), int(kv["DP"]), int(kv["OTH"])
+                if dp == 0:  # only non-panel alleles seen
+                    continue
+                rows.append((f"chr{chrom}", int(pos), ref, alt, site[2], dp - alt_n, alt_n, dp, oth))
     return rows
 
 
