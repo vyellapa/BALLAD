@@ -1,0 +1,8 @@
+# build context = repository root; the image needs only ballad.py, R/, resources/ and container/
+*
+!ballad.py
+!R/
+!resources/
+!container/
+resources/sites/all.sites.vcf.gz*
+**/__pycache__

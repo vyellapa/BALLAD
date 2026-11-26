@@ -1,0 +1,12 @@
+{
+  "_comment": "Config baked into the ballad image. Only the hg38 FASTA comes from outside (mount it and pass --ref, or mount it at /ref/hg38.fa). panel_dir and rnaseqcnv_dir are used only by 'prepare', which the image does not need: resources/ (B-ALL expression reference, panel site lists, exon cache) are already built in.",
+  "fasta": "/ref/hg38.fa",
+  "gtf": "/opt/ballad/resources/not_needed.gtf.gz",
+  "panel_dir": "/opt/ballad/resources/not_in_image_panel",
+  "panel_pattern": "1kGP_phase3.chr{chrom}.hg38.biSNP_maf0.01.bcf",
+  "rnaseqcnv_dir": "/opt/ballad/resources/not_in_image_rnaseqcnv",
+  "resources_dir": "/opt/ballad/resources",
+  "pileup": {"min_mapq": 20, "min_baseq": 20, "max_depth": 100000, "keep_duplicates": false},
+  "cellsnp_container": {"engine": "none", "image": "", "sif": null, "cellsnp": "cellsnp-lite"},
+  "numbat": {"t": 1e-05, "cnloh_flag": 5}
+}

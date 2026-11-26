@@ -1,0 +1,27 @@
+# Runtime environment for the ballad image. conda-forge + bioconda only (no defaults channel).
+# R 4.4 because bioconda's r-numbat 1.5.2 is built for it; Bioconductor packages are solved to match.
+name: base
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.12
+  - r-base=4.4
+  - r-numbat=1.5.2
+  - r-hahmmr
+  - r-data.table
+  - r-dplyr
+  - r-ggplot2
+  - r-glue
+  - r-optparse
+  - r-patchwork
+  - r-matrix
+  - bioconductor-genomicalignments
+  - bioconductor-rsamtools
+  - bioconductor-rtracklayer
+  - cellsnp-lite=1.2.3
+  - samtools=1.21
+  - bcftools=1.21
+  - htslib=1.21
+  - procps-ng

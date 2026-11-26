@@ -1,0 +1,25 @@
+{
+  "_comment": "For running the whole pipeline inside the numbat container (singularity exec numbat.sif python3 ballad.py --config config.server.json run ...). Edit panel_dir; copy resources/ from a machine where prepare has run.",
+  "fasta": "/path/to/hg38.fa",
+  "gtf": "/path/to/Homo_sapiens.GRCh38.102.gtf.gz",
+  "panel_dir": "/path/to/panel_hg38",
+  "panel_pattern": "1kGP_phase3.chr{chrom}.hg38.biSNP_maf0.01.bcf",
+  "rnaseqcnv_dir": "/path/to/RNAseqCNV",
+  "resources_dir": "resources",
+  "pileup": {
+    "min_mapq": 20,
+    "min_baseq": 20,
+    "max_depth": 100000,
+    "keep_duplicates": false
+  },
+  "cellsnp_container": {
+    "engine": "docker",
+    "image": "pkharchenkolab/numbat-rbase:v1.4.2",
+    "sif": null,
+    "cellsnp": "cellsnp-lite"
+  },
+  "numbat": {
+    "t": 1e-05,
+    "cnloh_flag": 5
+  }
+}

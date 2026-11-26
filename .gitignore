@@ -1,0 +1,16 @@
+# outputs and patient data never go in the repository
+out/
+test_out*/
+*.bam
+*.bai
+*.cram
+*.vcf
+*.HTSeq
+allele_counts.tsv.gz
+# rebuilt from the per-chromosome site lists on first run / in the Docker build (> 100 MB)
+resources/sites/all.sites.vcf.gz
+resources/sites/all.sites.vcf.gz.tbi
+*.bak*
+__pycache__/
+.DS_Store
+.Rhistory
