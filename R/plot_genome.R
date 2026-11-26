@@ -49,7 +49,7 @@ if (has_calls) {
                       call %in% c("gain", "double gain", "gain+LOH"), "amp", call == "loss", "del",
                       call == "CN-LOH", "loh", default = "focal")]
   segs <- cs[, .(CHROM, start, end, state, theta, log2r, cn = c)]
-  title_calls <- paste0(sm$est_chromosomes, " chromosomes (", sm$ploidy_group, ")")
+  title_calls <- paste0(sm$est_chromosomes, " chromosomes  \u00b7  ", sub(" \\(.*\\)$", "", sm$ploidy_group))
   bf <- if ("blast_fraction" %in% names(sm) && has(sm$blast_fraction)) {
     if ("blast_fraction_lo" %in% names(sm) && has(sm$blast_fraction_lo))
       sprintf("tumor fraction %.2f, 95%% CI %.2f-%.2f", sm$blast_fraction, sm$blast_fraction_lo, sm$blast_fraction_hi)
@@ -112,11 +112,12 @@ chr <- data.table(CHROM = 1:22, start = offset, end = offset + hg38_len)[, mid :
 
 # ---- event labels (secondary encoding: every call is named in text) ----
 ev <- segs_l[state != "neu"]
+seg_len <- segs[, .(tot = sum(end - start)), by = CHROM]           # the part of each chromosome the data cover
 ev_lab <- if (nrow(ev)) ev[, {
-  cov <- sum(end - start) / hg38_len[CHROM]
+  cov <- sum(end - start) / seg_len[.BY, on = "CHROM", tot]          # acrocentric p arms have no genes: not counted
   arm <- if (all(end <= hg38_cen[CHROM])) "p" else if (all(start >= hg38_cen[CHROM])) "q" else ""
   # label = copy change (the chromosome is on the axis): +1 gain, +2 two-copy gain (2:2 or 4:1), -1 loss, CN-LOH;
-  # events covering < 80% of the chromosome add the arm on a second line
+  # events covering < 80% of the chromosome (of its segmented length) add the arm on a second line
   d <- cn[which.max(end - start)] - 2
   txt <- if (state[1] == "loh") "CN-LOH" else if (d > 0) paste0("+", d) else sub("-", "\u2212", as.character(d))
   if (cov < 0.8) txt <- paste0(txt, "\n", CHROM, arm)

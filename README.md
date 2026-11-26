@@ -13,10 +13,10 @@ everything except the hg38 FASTA.
 are on the [BALLAD Wiki](https://github.com/vyellapa/BALLAD/wiki).** The short version, with Docker:
 
 ```bash
-docker pull --platform linux/amd64 vyellapa/ballad:0.1.1
+docker pull --platform linux/amd64 vyellapa/ballad:0.1.2
 docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" \
   -v "$PWD/results:/out" -v /path/to/bams:/data:ro \
-  vyellapa/ballad:0.1.1 run --bam /data/S1.bam --outdir /out --threads 8      # -> results/S1/
+  vyellapa/ballad:0.1.2 run --bam /data/S1.bam --outdir /out --threads 8      # -> results/S1/
 ```
 
 | Wiki page | What it covers |
@@ -47,10 +47,10 @@ The rest of this README is the technical reference: requirements for running fro
 Everything except the hg38 FASTA is in the image (`container/`, details in `container/README.md`):
 
 ```bash
-docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.1 .
+docker build --platform linux/amd64 -f container/Dockerfile -t ballad:0.1.2 .
 docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" \
   -v /path/to/bams:/data:ro -v /path/to/hg38_dir:/ref:ro -v "$PWD/out":/out \
-  ballad:0.1.1 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
+  ballad:0.1.2 run --bam /data/S.bam --ref /ref/hg38.fa --outdir /out --threads 8
 ```
 
 ## Use
