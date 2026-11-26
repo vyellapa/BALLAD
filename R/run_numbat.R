@@ -10,9 +10,9 @@
 # step, because RNA phase holds only within ~50 kb and the calls (call_arms.R, genotype-free allele model) never used it.
 # analyze_bulk(exp_only = TRUE) treats every region as diploid baseline and ignores the allele columns, but get_bulk /
 # analyze_bulk still require some allele rows, so hets by numbat's genotype rule (0.1 <= ALT/DP <= 0.9) are passed with a
-# placeholder phase (1|0) and genetic position (1 cM/Mb). On HH-1 this gives segments and logFC identical to the
+# placeholder phase (1|0) and genetic position (1 cM/Mb). This gives segments and logFC identical to the
 # former Eagle-phased exp_only run (max |logFC difference| 5e-15). Expression alone cannot see CN-LOH or tell a 2:2 gain
-# from a 3:1, and it called -19 / -22 there that the allele model rejects: read numbat's calls as a check only.
+# from a 3:1: read numbat's calls as a check only.
 #
 # Karyotype (karyotype.tsv, one row per autosome): the numbat state covering most of the chromosome, copy change
 # (amp +1, bamp +2, del -1, bdel -2, loh 0), and the both-allele rate (see below). summary.tsv: estimated chromosome

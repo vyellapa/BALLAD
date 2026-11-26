@@ -33,9 +33,10 @@ alt_n <- rbinom(nrow(ac), n_norm, af_n)
 ac[, ALT_N := alt_t + alt_n][, REF_N := DP - ALT_N]
 fwrite(ac[, .(CHROM, POS, REF, ALT, AF, REF_N, ALT_N, DP, OTH)], file.path(dst, "allele_counts.tsv.gz"), sep = "\t")
 
-bk <- fread(file.path(src, "numbat", "bulk_joint.tsv.gz"))
+bk_name <- if (file.exists(file.path(src, "numbat", "bulk_exp_only.tsv.gz"))) "bulk_exp_only.tsv.gz" else "bulk_joint.tsv.gz"
+bk <- fread(file.path(src, "numbat", bk_name))
 bk[!is.na(logFC), logFC := log2(p * 2^(logFC - base0) + (1 - p)) + base0]
-fwrite(bk, file.path(dst, "numbat", "bulk_joint.tsv.gz"), sep = "\t")
+fwrite(bk, file.path(dst, "numbat", bk_name), sep = "\t")
 file.copy(file.path(src, c("karyotype.tsv", "summary.tsv")), dst, overwrite = TRUE)
 cat(sprintf("p = %.2f: %d sites, genotypes hom-ref/het/hom-alt %s, mean normal-read share %.3f\n",
             p, nrow(ac), paste(tabulate(g, 3), collapse = "/"), mean(w)))

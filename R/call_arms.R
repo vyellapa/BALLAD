@@ -25,7 +25,7 @@
 #    are mostly mono-allelic expression (imprinted clusters such as 11p15.5, protocadherins at 5q31) and RNA cannot
 #    resolve focal copy number anyway; they are listed for review, not counted. Balanced double gains rest on
 #    expression alone (theta unchanged), the evidence most affected by aligner / counting differences against the
-#    reference (e.g. 1q21 pericentromeric genes with DRAGEN counts vs the STAR-based RNAseqCNV reference), so they need
+#    reference, so they need
 #    2 x --min_call_bins bins; shorter ones are listed as "focal expression change".
 # 4. Arm and chromosome calls (the state covering most of the arm; whole-chromosome when every arm agrees over
 #    >= 80%), chromosome number, ploidy group, LOH regions and flags.
@@ -211,14 +211,14 @@ both_term <- function(th) {
 
 # grid over blast fraction p and expression baseline. Only segments of >= --min_call_bins bins and >= --fit_min_mb
 # (5 Mb, as HAPLOID's MIN_SEG) are fitted: shorter ones are mostly allele-specific expression, and one of them can pull
-# p on its own (on HH-1 a 3.1 Mb segment at 11q12-13, theta 0.145, fits a loss at p ~ 0.48 and nothing at p = 1).
+# p on its own (a short imbalanced segment can fit a loss at low p and nothing at p = 1).
 # Every segment then gets its best state at the fitted (p, baseline).
 # state prior: --penalty events (default) charges --state_penalty per copy changed, the PURPLE event distance HAPLOID
 # uses (|major - 1| + |minor - 1|: gain 3:1 and loss 1:0 = 1, CN-LOH 2:0, 4:2 and 4:1 = 2, 3:0 = 3). Without it a
 # one-copy gain at p = 1 and a two-copy gain (4:1) at p ~ 0.5 have the same theta and expression and the same cost, so
 # p is held up by whichever LOH or 2:2 segment happens to be present. --penalty flat = the former one charge per state.
 # B-ALL prior (as --ball_prior in run_numbat.R): the balanced 4:2 gain (tetrasomy 21, the hallmark of high
-# hyperdiploidy) costs one event like a single-copy gain; at 2 its expression-only evidence lost +21x2 below p ~ 0.4.
+# hyperdiploidy) costs one event like a single-copy gain; at 2 its expression-only evidence is lost at low p.
 ev <- with(states, abs(pmax(c - b, b) - 1) + abs(pmin(c - b, b) - 1))
 if (opt$ball_prior) ev[states$label == "balanced double gain"] <- 1
 pen <- matrix(opt$state_penalty * (if (opt$penalty == "events") ev else as.numeric(ev > 0)), n_seg, nrow(states),

@@ -58,8 +58,6 @@ singularity run --cleanenv --bind /path/to/bams:/data,/path/to/hg38_dir:/ref,$PW
 
 ## Tested (Nov 2026, Docker 29 on Apple silicon, amd64 emulation)
 
-- HH-1 from its HaplotypeCaller VCF + HTSeq counts: outputs identical to the native run (51 chromosomes,
-  +6 +14 +17 +21x2, 16p CN-LOH, tumor fraction 0.97, 95% CI 0.88-1.00), 36 s.
 - BAM steps on a chr21-22 slice of an hg38 BAM: gene counting (strandedness detection), cellsnp-lite and bcftools
   pileups (117.0 k vs 116.9 k sites), with and without the FASTA mounted; an hg19 BAM is refused.
 - Not yet run in the container on a full RNA-seq BAM end to end; do that on the first cluster sample.
