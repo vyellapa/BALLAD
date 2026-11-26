@@ -7,6 +7,31 @@ segmented jointly → karyotype, ploidy group, LOH and tumor fraction. No phasin
 Input: an hg38 RNA-seq BAM (or, for archived samples, a HaplotypeCaller VCF + HTSeq counts). The Docker image holds
 everything except the hg38 FASTA.
 
+## Getting started
+
+**Installation, a step-by-step quick start, running on HPC clusters, every output column and how to read the results
+are on the [BALLAD Wiki](https://github.com/vyellapa/BALLAD/wiki).** The short version, with Docker:
+
+```bash
+docker pull --platform linux/amd64 vyellapa/ballad:0.1.1
+docker run --rm --platform linux/amd64 --user "$(id -u):$(id -g)" \
+  -v "$PWD/results:/out" -v /path/to/bams:/data:ro \
+  vyellapa/ballad:0.1.1 run --bam /data/S1.bam --outdir /out --threads 8      # -> results/S1/
+```
+
+| Wiki page | What it covers |
+|---|---|
+| [Installation](https://github.com/vyellapa/BALLAD/wiki/Installation) | Docker, Singularity / Apptainer, running from source |
+| [Quick Start](https://github.com/vyellapa/BALLAD/wiki/Quick-Start) | your first run, step by step |
+| [Usage](https://github.com/vyellapa/BALLAD/wiki/Usage) | inputs (BAM, or VCF + gene counts), options, several samples |
+| [Singularity / HPC](https://github.com/vyellapa/BALLAD/wiki/Singularity) | pulling and running on clusters, SLURM jobs |
+| [Output](https://github.com/vyellapa/BALLAD/wiki/Output) | every output file and column |
+| [Interpreting Results](https://github.com/vyellapa/BALLAD/wiki/Interpreting-Results) | karyotype, tumor fraction, LOH, flags, limits |
+| [Advanced](https://github.com/vyellapa/BALLAD/wiki/Advanced) | caller settings, in-house expression reference, building the image |
+| [FAQ](https://github.com/vyellapa/BALLAD/wiki/FAQ) | common questions and error messages |
+
+The rest of this README is the technical reference: requirements for running from source, method notes and outputs.
+
 ## Requirements
 - `bcftools`, `samtools`, `bgzip`, `tabix`, `Rscript`, Python ≥ 3.9 (standard library only)
 - R packages: numbat (+ hahmmr), data.table, dplyr, Matrix, ggplot2, glue, optparse, org.Hs.eg.db, AnnotationDbi
