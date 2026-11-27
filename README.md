@@ -109,6 +109,9 @@ singularity exec -B /path/to/bams,/path/to/htseq,/path/to/panel_hg38,/path/to/ou
   ~50 kb, and the phased BAF track only added noise to the plot. numbat now runs expression-only; it still needs
   allele rows, so hets by its genotype rule are passed with a placeholder phase (identical segments and logFC to the
   former phased run). Removing it drops the Eagle / docker dependency on macOS.
+- **Gene counts** (`R/count_genes.R`): htseq-count union mode on Ensembl 102, strandedness detected on chr22, unique
+  reads with MAPQ ≥ 10, duplicates kept, read 1 per pair. MD-ALL's pipeline instead runs `htseq-count -m
+  intersection-strict -s no -a 10`; to use its counts exactly, pass its `.HTSeq` file with `--counts`.
 - **Expression reference**: RNAseqCNV's 44 diploid B-ALL samples (or in-house via `--standard-counts`); numbat fits each
   sample as a mixture of them. MHC is masked by numbat.
 - **B-ALL prior** (`call_arms.R --ball_prior`): the balanced 4:2 gain (tetrasomy 21, the hallmark of high
